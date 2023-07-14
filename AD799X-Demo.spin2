@@ -1,11 +1,11 @@
 {
     --------------------------------------------
-    Filename: AD799X-Demo.spin
+    Filename: AD799X-Demo.spin2
     Author: Jesse Burt
-    Description: Demo of the AD799X ADC driver
+    Description: Demo of the AD799X ADC driver (P2 version)
         * First channel voltage display
     Copyright (c) 2023
-    Started Jul 2, 2023
+    Started Jul 14, 2023
     Updated Jul 14, 2023
     See end of file for terms of use.
     --------------------------------------------
@@ -13,29 +13,27 @@
 
 CON
 
-    _clkmode    = cfg#_clkmode
-    _xinfreq    = cfg#_xinfreq
+    _clkfreq    = cfg._clkfreq_def
+    _xtlfreq    = cfg._xtlfreq
 
 ' -- User-defined constants
-    SER_BAUD    = 115_200
+    SER_BAUD    = 2_000_000
 
 ' --
 
 OBJ
 
-    cfg:    "boardcfg.flip"
+    cfg:    "boardcfg.p2eval"
     ser:    "com.serial.terminal.ansi"
-    time:   "time"
-    adc:    "signal.adc.ad799x" | SCL=28, SDA=29, I2C_FREQ=400_000
+    adc:    "signal.adc.ad799x" | SCL=0, SDA=1, I2C_FREQ=400_000
 
-PUB main{}
+PUB main()
 
     ser.start(SER_BAUD)
-    time.msleep(30)
-    ser.clear{}
+    ser.clear()
     ser.strln(@"Serial terminal started")
 
-    if ( adc.start{} )
+    if ( adc.start() )
         ser.strln(@"AD799x driver started")
     else
         ser.strln(@"AD799x driver failed to start - halting")
@@ -50,9 +48,9 @@ PUB main{}
 
     repeat
         ser.pos_xy(0, 3)
-        show_adc_data{}
+        show_adc_data()
 
-#include "adcdemo.common.spinh"                 ' use code common to all ADC demos
+#include "adcdemo.common.spin2h"                ' use code common to all ADC demos
 
 DAT
 {
