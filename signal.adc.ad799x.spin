@@ -105,15 +105,14 @@ PUB adc_chan_enabled(mask): curr_mask
     if ( _opmode )                              ' temporarily stop measurements if they're running
         i2c.stop()
 
-    curr_mask := 0
     { handle model-specific differences below; reg size, masks, etc }
-    readreg(core.CONFIG, core.CONFIG_REGSZ, @curr_mask)
+    curr_mask := readreg(core.CONFIG, core.CONFIG_REGSZ)
     case mask
         0..core.CH_BITS:
             mask := ((curr_mask & core.CH_MASK) | (mask << core.CH) )
-            writereg(core.CONFIG, core.CONFIG_REGSZ, @mask)
+            writereg(core.CONFIG, core.CONFIG_REGSZ, mask)
         other:
-            return ((curr_mask >> core.CH) & core.CH_BITS)
+            curr_mask := ((curr_mask >> core.CH) & core.CH_BITS)
 
     opmode(_opmode)
 
@@ -124,19 +123,17 @@ PUB adc_data(): w
     return _last_meas := i2c.rdword_msbf(i2c.ACK)
 
 
-pub adc_data_rate(rate): curr_rate | tmp
+pub adc_data_rate(rate): curr_rate
 ' Set ADC data rate (interval between measurements as a function of (Tconvert * rate) )
 '   Valid values: 32, 64, 128, 256, 512, 1024, 2048
     if ( _opmode )
         i2c.stop()
 
-    curr_rate := 0
-    readreg(core.CYC_TMR, 1, @curr_rate)
+    curr_rate := readreg(core.CYC_TMR)
     case rate
         32..2048:
-            rate := ( ( >|(rate >> 4)-1 ) )
-            rate := ((curr_rate & core.CYC_MASK) | rate)
-            writereg(core.CYC_TMR, 1, @rate)
+            rate := ( (curr_rate & core.CYC_MASK) | ( >|(rate >> 4)-1 ) )
+            writereg(core.CYC_TMR, 1, rate)
         other:
             curr_rate := (1 << (curr_rate & core.CYC_BITS) << 4 )
 
@@ -158,12 +155,11 @@ pub alert_busy_pin_mode(mode): curr_mode
     if ( _opmode )
         i2c.stop()
 
-    curr_mode := 0
-    readreg(core.CONFIG, core.CONFIG_REGSZ, @curr_mode)
+    curr_mode := readreg(core.CONFIG, core.CONFIG_REGSZ)
     case mode
         NO_INT, BUSY_OUT, INT_OUT:
             mode := ( (curr_mode & core.ALT_BSY_MASK) | (mode << core.BUSY_ALERT) )
-            writereg(core.CONFIG, core.CONFIG_REGSZ, @mode)
+            writereg(core.CONFIG, core.CONFIG_REGSZ, mode)
         other:
             curr_mode := ((curr_mode >> core.BUSY_ALERT) & core.ALT_BSY_BITS)
 
@@ -218,25 +214,26 @@ PUB set_ref_voltage(v): curr_v
     _adc_ref := (1_200000 #> v <# 5_500000)
 
 
-PRI readreg(reg_nr, nr_bytes, ptr_buff) | cmd_pkt
+PRI readreg(reg_nr, nr_bytes=1): v | cmd_pkt
 ' Read nr_bytes from the device into ptr_buff
     case reg_nr                                 ' validate register num
         $01..$0F:
             cmd_pkt.byte[0] := SLAVE_WR
             cmd_pkt.byte[1] := reg_nr
+            v := 0
             i2c.start()
             i2c.wrblock_lsbf(@cmd_pkt, 2)
             i2c.stop()
 
             i2c.start()
             i2c.wr_byte(SLAVE_RD)
-            i2c.rdblock_msbf(ptr_buff, nr_bytes, i2c.NAK)
+            i2c.rdblock_msbf(@v, nr_bytes, i2c.NAK)
             i2c.stop()
         other:                                  ' invalid reg_nr
             return
 
 
-PRI writereg(reg_nr, nr_bytes, ptr_buff) | cmd_pkt
+PRI writereg(reg_nr, nr_bytes, val) | cmd_pkt
 ' Write nr_bytes to the device from ptr_buff
     case reg_nr
         $01..$0F:
@@ -244,7 +241,7 @@ PRI writereg(reg_nr, nr_bytes, ptr_buff) | cmd_pkt
             cmd_pkt.byte[1] := reg_nr
             i2c.start()
             i2c.wrblock_lsbf(@cmd_pkt, 2)
-            i2c.wrblock_msbf(ptr_buff, nr_bytes)
+            i2c.wrblock_msbf(@val, nr_bytes)
             i2c.stop()
         other:
             return
