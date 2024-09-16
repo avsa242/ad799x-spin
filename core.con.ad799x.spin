@@ -1,13 +1,12 @@
 {
-    --------------------------------------------
-    Filename: core.con.ad799x.spin
-    Author:
-    Description:
-    Copyright (c) 2023
-    Started MMMM DDDD, YYYY
-    Updated MMMM DDDD, YYYY
-    See end of file for terms of use.
-    --------------------------------------------
+----------------------------------------------------------------------------------------------------
+    Filename:       core.con.ad799x.spin
+    Description:    AD799x-specific constants
+    Author:         Jesse Burt
+    Started:        Jul 2, 2023
+    Updated:        Sep 16, 2024
+    Copyright (c) 2024 - See end of file for terms of use.
+----------------------------------------------------------------------------------------------------
 }
 
 CON
@@ -95,15 +94,16 @@ CON
 
     CH4_LO_THR              = $0d
     CH4_HI_THR              = $0e
-    CH4_HYST                = $06f
+    CH4_HYST                = $0f
 
 
-PUB null{}
+PUB null()
 ' This is not a top-level object
+
 
 DAT
 {
-Copyright 2023 Jesse Burt
+Copyright 2024 Jesse Burt
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,

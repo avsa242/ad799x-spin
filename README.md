@@ -26,14 +26,15 @@ P2/SPIN2:
 * `signal.adc_common.spin2h` (provided by p2-spin-standard-library)
 _(NOTE: untested on P2)_
 
+
 ## Compiler Compatibility
 
 | Processor | Language | Compiler               | Backend      | Status                |
 |-----------|----------|------------------------|--------------|-----------------------|
-| P1	    | SPIN1    | FlexSpin (6.2.1)	| Bytecode     | OK                    |
-| P1	    | SPIN1    | FlexSpin (6.2.1)       | Native/PASM  | OK                    |
-| P2	    | SPIN2    | FlexSpin (6.2.1)       | NuCode       | FTBFS                 |
-| P2        | SPIN2    | FlexSpin (6.2.1)       | Native/PASM2 | Build OK              |
+| P1        | SPIN1    | FlexSpin (6.9.4)       | Bytecode     | OK                    |
+| P1        | SPIN1    | FlexSpin (6.9.4)       | Native/PASM  | OK                    |
+| P2        | SPIN2    | FlexSpin (6.9.4)       | NuCode       | Untested (build OK)   |
+| P2        | SPIN2    | FlexSpin (6.9.4)       | Native/PASM2 | Untested (build OK)   |
 
 (other versions or toolchains not listed are __not supported__, and _may or may not_ work)
 
@@ -43,6 +44,7 @@ _(NOTE: untested on P2)_
 * Supports AD7993, AD7994, AD7997, AD7998
 * Tested with AD7993-1 (Parallax Propeller Board of Education)
 * Untested with P2
+
 
 ## Limitations
 
