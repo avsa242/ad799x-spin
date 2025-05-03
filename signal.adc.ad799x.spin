@@ -4,8 +4,8 @@
     Description:    Driver for Analog Devices AD799x-series ADCs
     Author:         Jesse Burt
     Started:        Jul 2, 2023
-    Updated:        Sep 16, 2024
-    Copyright (c) 2024 - See end of file for terms of use.
+    Updated:        May 3, 2025
+    Copyright (c) 2025 - See end of file for terms of use.
 ----------------------------------------------------------------------------------------------------
 }
 
@@ -142,7 +142,7 @@ pub adc_data_rate(rate): curr_rate
 
 pub adc2volts(adc_word): volts
 ' Scale ADC word to microvolts
-    return (adc_word >> 2) * _scale
+    return ( (adc_word & $fff) >> 2) * _scale
 
 
 con #0, NO_INT, BUSY_OUT, INT_OUT               ' valid modes for alert_busy_pin_mode()
@@ -251,7 +251,7 @@ PRI writereg(reg_nr, nr_bytes, val) | cmd_pkt
 
 DAT
 {
-Copyright 2024 Jesse Burt
+Copyright 2025 Jesse Burt
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
